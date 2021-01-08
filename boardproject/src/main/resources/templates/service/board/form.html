@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://www.thymeleaf.org"
+        layout:decorate="~{layout/main-layout}" lang="ko">
+<body>
+<th:block layout:fragment="bodyFragment">
+    <div class="pt-5 container">
+        <div class="page-header text-center">
+            <h1 class="h3 mb-3 fw-normal" th:text="${board?.postId} ? '게시글 상세' : '게시글 등록'"></h1>
+        </div>
+        <br/>
+        <input id="board_idx" type="hidden" th:value="${board?.postId}" />
+        <table class="table">
+            <tr>
+                <th style="padding:13px 0 0 15px;">작성자</th>
+                <td>
+                    <input id="board_writer" type="text" class="form-control input-sm" th:value="${board?.postId} ? ${board?.memberName} : ${session['authName']}" />
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">제목</th>
+                <td>
+                    <input id="board_title" type="text" class="form-control input-sm" th:value="${board?.postTitle}" />
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">내용</th>
+                <td>
+                    <textarea id="board_content" class="form-control input-sm"
+                              maxlength="140" rows="70" style="height: 200px;" th:text="${board?.postContent}" ></textarea>
+                    <span class="help-block"></span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- 목록으로 -->
+        <span class="float-sm-end">
+            <a href="/board/list" class="btn btn-success">목록으로</a>
+        </span>
+
+        <!-- 저장/수정/삭제 버튼 -->
+        <span class="float-sm-start">
+            <button th:if="!${board?.postId}" type="button" class="btn btn-primary" id="insert">저장</button>
+            <th:block th:if="${board?.postId}">
+                <button th:if="${board?.memberName.equals(session['authName'])}" type="button" class="btn btn-info" id="update">수정</button>
+                <button th:if="${board?.memberName.equals(session['authName'])}" type="button" class="btn btn-danger" id="delete">삭제</button>
+            </th:block>
+        </span>
+
+        <!-- 댓글 -->
+        <h4 class="mb-3 pt-5 text-sm-start">댓글</h4>
+        <div class="row">
+            <table class="table table-hover">
+                <tbody>
+                <tr th:each="comment : ${commentList}">
+                    <td th:text="${comment.memberName}"></td>
+                    <td th:text="${comment.commentContent}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <textarea id="comment_content" class="form-control input-sm" maxlength="140" rows="70" style="height: 50px;"></textarea>
+        <span class="float-sm-end pt-1">
+            <button type="button" class="btn btn-primary" id="insert_comment">댓글 저장</button>
+        </span>
+
+    </div>
+
+    <!-- 신규 등록 -->
+    <script th:if="!${board?.postId}">
+        // 저장버튼
+        $("#insert").on("click", function() {
+            let jsonData = JSON.stringify({
+                postTitle : $("#board_title").val(),
+                postContent : $("#board_content").val()
+            });
+            $.ajax({
+                url : "/board",
+                type : "POST",
+                data : jsonData,
+                contentType : "application/json",
+                dataType : "json",
+                success : function() {
+                    alert("저장 성공!");
+                    location.href = "/board/list";
+                },
+                error : function() {
+                    alert("저장 실패!");
+                }
+            });
+        });
+    </script>
+
+    <!-- 수정/삭제 -->
+    <script th:if="${board?.postId}">
+        // 수정버튼
+        $("#update").on("click", function() {
+            var jsonData = JSON.stringify({
+                postTitle : $("#board_title").val(),
+                postContent : $("#board_content").val()
+            });
+            $.ajax({
+                url : "/board/" + $("#board_idx").val(),
+                type : "PUT",
+                data : jsonData,
+                contentType : "application/json",
+                dataType : "json",
+                success : function() {
+                    alert("수정 성공!");
+                    location.href = "/board/list";
+                },
+                error : function() {
+                    alert("수정 실패!");
+                }
+            });
+        });
+
+        // 삭제버튼
+        $("#delete").on("click", function() {
+            $.ajax({
+                url : "/board/" + $("#board_idx").val(),
+                type : "DELETE",
+                success : function() {
+                    alert("삭제 성공!");
+                    location.href = "/board/list";
+                },
+                error : function() {
+                    alert("삭제 실패!");
+                }
+            });
+        });
+    </script>
+
+    <!-- 댓글 저장 -->
+    <script th:if="${board?.postId}">
+        $("#insert_comment").on("click", function() {
+            let jsonData = JSON.stringify({
+                postId : $("#board_idx").val(),
+                commentContent : $("#comment_content").val()
+            });
+            $.ajax({
+                url : "/board/comment",
+                type : "POST",
+                data : jsonData,
+                contentType : "application/json",
+                dataType : "json",
+                success : function() {
+                    alert("댓글이 등록되었습니다.");
+                    window.location.reload();
+                },
+                error : function() {
+                    alert("등록 실패!");
+                }
+            });
+        });
+    </script>
+
+</th:block>
+</body>
+</html>

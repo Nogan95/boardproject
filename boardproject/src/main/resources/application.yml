@@ -1,0 +1,13 @@
+server:
+  port: 80
+
+mybatis:
+  type-aliases-package: java.jhin.lee.mapper
+  mapper-locations: mybatis/mapper/**/*.xml
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/boardproject?characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: anfrha102!
+#   driver-class-name: com.mysql.cj.jdbc.Driver

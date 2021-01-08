@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<th:block th:fragment="navbarFragment">
+    <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+        <a class="navbar-brand" aria-current="page" href="/">게시판 프로젝트</a>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="/board/list">게시판</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" aria-current="page" th:text="${session['authName']}? ${'로그아웃('+ session['authName'] + ')'} : 로그인" href="/account/logout">로그인</a>
+            </li>
+        </ul>
+    </nav>
+</th:block>
+</html>

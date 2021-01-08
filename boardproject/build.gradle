@@ -1,0 +1,43 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.1'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+}
+
+group = 'com.jhin'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// spring
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+	// thymeleaf
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+	// mysql, mybatis
+	compile 'mysql:mysql-connector-java'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+
+	// redis, caffeine cache
+	// implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'com.github.ben-manes.caffeine:caffeine:2.8.8'
+
+	// ect
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	compile 'org.mindrot:jbcrypt:0.4'
+}
